@@ -2,8 +2,7 @@
 
 This is boilerplate to hit the ground running with a typescript monorepo that has a completely separated server/client with a react SPA,
 with typesafe communication done through TRPC. This is an alternative approach to the SSR and server coupling that is 
-encouraged when using remix (react-router v7) or next.js. Packages included are intended to provide high value while limiting
-the frameworks or libraries one may need to learn.
+encouraged when using remix (react-router v7) or next.js. 
 
 What this gives you:
 - Node express server and react SPA client communicating over [TRPC](https://trpc.io) with shared [zod](https://zod.dev) validation throughout.
