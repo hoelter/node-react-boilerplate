@@ -1,26 +1,23 @@
 {
-  "name": "nodeReactBoilerplate",
+  "name": "NodeReactBoilerplate",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
   "workspaces": [
     "client",
     "server"
   ],
   "scripts": {
-    "dev:client": "npm run dev -w client",
-    "dev:server": "npm run dev -w server",
-    "dev": "concurrently npm:dev:*",
-    "build:client": "npm run build -w client",
-    "build:server": "npm run build -w server",
-    "build": "concurrently npm:build:*",
-    "start:server": "npm run start -w server",
-    "preview:client": "npm run preview -w client",
-    "preview": "npm run build && concurrently npm:start:server npm:preview:client",
-    "typecheck:client": "npm run typecheck -w client",
-    "typecheck:server": "npm run typecheck -w server",
-    "typecheck": "concurrently npm:typecheck:*",
+    "dev": "concurrently \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
+    "build": "concurrently \"pnpm --filter client build\" \"pnpm --filter server build && pnpm --filter server build:worker\"",
+    "preview": "pnpm run build && concurrently \"pnpm --filter server start\" \"pnpm --filter client preview\"",
+    "typecheck": "concurrently \"pnpm --filter client typecheck\" \"pnpm --filter server typecheck\"",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0 --fix .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "check": "pnpm run typecheck && pnpm run format && pnpm run lint"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",
@@ -28,6 +25,7 @@
     "concurrently": "^8.2.2",
     "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react-refresh": "^0.4.11",
     "prettier": "^3.3.2",
     "typescript": "^5.5.4",
