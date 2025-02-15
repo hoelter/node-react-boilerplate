@@ -1,13 +1,6 @@
-import { trpc } from "@client/utils/trpc";
-import { Text, Title } from "@mantine/core";
+import { routes } from "@client/clientConstants";
+import { Redirect } from "wouter";
 
 export function HomeRoute() {
-  const { data: helloWorldText } = trpc.getHelloWorld.useQuery();
-
-  return (
-    <div>
-      <Title order={2}>Home Route</Title>
-      {helloWorldText ? <Text>{helloWorldText}</Text> : null}
-    </div>
-  );
+  return <Redirect to={routes.helloWorld} />;
 }

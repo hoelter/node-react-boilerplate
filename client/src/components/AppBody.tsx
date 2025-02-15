@@ -1,5 +1,5 @@
 import { HomeRoute } from "@client/components/HomeRoute";
-import { routes } from "@client/constants";
+import { routes } from "@client/clientConstants";
 import { Route, Switch } from "wouter";
 
 export function AppBody() {

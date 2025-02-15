@@ -1,13 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { httpBatchLink } from "@trpc/client";
+import { Shell } from "@client/components/Shell";
+import { queryClient } from "@client/utils/queryClient";
 import { trpc } from "@client/utils/trpc";
 import { createTheme, MantineProvider } from "@mantine/core";
-import { Shell } from "@client/components/Shell";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
+
 const theme = createTheme({
   /** Put your mantine theme override here */
 });
 
-const queryClient = new QueryClient();
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
