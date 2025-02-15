@@ -54,9 +54,6 @@ importers:
       '@mantine/hooks':
         specifier: ^7.16.2
         version: 7.16.3(react@18.3.1)
-      '@tabler/icons-react':
-        specifier: 3.17.0
-        version: 3.17.0(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.34.2
         version: 5.66.0(react@18.3.1)
@@ -738,14 +735,6 @@ packages:
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
-
-  '@tabler/icons-react@3.17.0':
-    resolution: {integrity: sha512-Ndm9Htv7KpIU1PYYrzs5EMhyA3aZGcgaxUp9Q1XOxcRZ+I0X+Ub2WS5f4bkRyDdL1s0++k2T9XRgmg2pG113sw==}
-    peerDependencies:
-      react: '>= 16'
-
-  '@tabler/icons@3.17.0':
-    resolution: {integrity: sha512-sCSfAQ0w93KSnSL7tS08n73CdIKpuHP8foeLMWgDKiZaCs8ZE//N3ytazCk651ZtruTtByI3b+ZDj7nRf+hHvA==}
 
   '@tanstack/query-core@5.66.0':
     resolution: {integrity: sha512-J+JeBtthiKxrpzUu7rfIPDzhscXF2p5zE/hVdrqkACBP8Yu0M96mwJ5m/8cPPYQE9aRNvXztXHlNwIh4FEeMZw==}
@@ -3016,13 +3005,6 @@ snapshots:
     optional: true
 
   '@rtsao/scc@1.1.0': {}
-
-  '@tabler/icons-react@3.17.0(react@18.3.1)':
-    dependencies:
-      '@tabler/icons': 3.17.0
-      react: 18.3.1
-
-  '@tabler/icons@3.17.0': {}
 
   '@tanstack/query-core@5.66.0': {}
 
