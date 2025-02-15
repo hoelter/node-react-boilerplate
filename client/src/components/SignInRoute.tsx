@@ -11,9 +11,7 @@ export function SignInRoute() {
 
   const login = trpc.login.useMutation({
     onSuccess() {
-      console.log("login success");
       const returnUrl = new URLSearchParams(searchString).get("returnUrl");
-      console.log("returnUrl", returnUrl);
       setLocation(returnUrl || routes.root);
     },
   });
