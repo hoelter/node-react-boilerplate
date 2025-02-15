@@ -34,16 +34,8 @@ COPY --from=build-deps /workdir/client/node_modules ./client/node_modules
 COPY . .
 RUN pnpm run build
 
-# Copy prod-deps and install playwright
-FROM base AS playwright
-WORKDIR /workdir
-COPY --from=prod-deps /workdir/node_modules ./node_modules
-COPY --from=prod-deps /workdir/server/node_modules ./server/node_modules
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN ./server/node_modules/.bin/playwright install chromium --with-deps
-
-# Prod image stage, based on playwright
-FROM playwright
+# Prod image stage
+FROM base
 WORKDIR /workdir
 COPY --from=build /workdir/server/dist ./server/dist
 COPY --from=build /workdir/client/dist ./client/dist
