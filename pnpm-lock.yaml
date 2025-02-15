@@ -66,9 +66,6 @@ importers:
       '@trpc/react-query':
         specifier: ^11.0.0-next-beta.303
         version: 11.0.0-rc.768(@tanstack/react-query@5.66.0(react@18.3.1))(@trpc/client@11.0.0-rc.768(@trpc/server@11.0.0-rc.768(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.768(typescript@5.7.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.3)
-      dayjs:
-        specifier: ^1.11.11
-        version: 1.11.13
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1124,9 +1121,6 @@ packages:
 
   dateformat@4.6.3:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
-
-  dayjs@1.11.13:
-    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -3489,8 +3483,6 @@ snapshots:
       '@babel/runtime': 7.26.9
 
   dateformat@4.6.3: {}
-
-  dayjs@1.11.13: {}
 
   debug@2.6.9:
     dependencies:

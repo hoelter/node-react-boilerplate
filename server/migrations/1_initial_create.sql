@@ -1,4 +1,5 @@
 create extension if not exists citext;
+create extension if not exists pgcrypto;
 
 create or replace function trigger_set_updated_at() returns trigger as $$
 begin
@@ -14,3 +15,8 @@ create table if not exists usr (
   created_at timestamptz not null default current_timestamp
 );
 
+insert into usr
+  (username, password)
+values
+  ('test', crypt('test', gen_salt('bf', 8)))
+;
