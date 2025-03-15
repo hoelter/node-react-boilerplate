@@ -1,8 +1,7 @@
-import { getTRPCErrorCode, getTRPCHttpStatusCode, UnauthorizedError } from "@server/utils/errorUtils";
+import { getOutputMessage, getTRPCErrorCode, getTRPCHttpStatusCode, UnauthorizedError } from "@server/utils/errorUtils";
 
 import { loginRequestSchema } from "@shared/types";
 import { initTRPC } from "@trpc/server";
-import { ZodError } from "zod";
 
 import { TRPCContext } from "@server/services/trpcService";
 import { getHelloWorld } from "@server/trpcEndpoints/getHelloWorld";
@@ -12,9 +11,10 @@ import { logout } from "@server/trpcEndpoints/postLogout";
 const t = initTRPC.context<TRPCContext>().create({
   errorFormatter: ({ error, shape }) => {
     const { message, data, ...rest } = shape;
+
     return {
       ...rest,
-      message: error.cause instanceof ZodError ? error.cause.flatten().formErrors[0] : message,
+      message: getOutputMessage(message, error),
       data: {
         ...data,
         httpStatus: getTRPCHttpStatusCode(shape.data.httpStatus, error),
@@ -29,7 +29,12 @@ export const protectedProcedure = publicProcedure.use(async (opts) => {
   if (!opts.ctx.authContext.isAuthenticated) {
     throw new UnauthorizedError("User is not authenticated.");
   }
-  return opts.next();
+
+  return opts.next({
+    ctx: {
+      authContext: opts.ctx.authContext,
+    },
+  });
 });
 
 export const appRouter = t.router({
@@ -39,7 +44,9 @@ export const appRouter = t.router({
   logout: protectedProcedure.mutation(async (opts) => {
     return await logout(opts.ctx);
   }),
-  getHelloWorld: protectedProcedure.query(getHelloWorld),
+  getHelloWorld: protectedProcedure.query(() => {
+    return getHelloWorld();
+  }),
 });
 
 export type AppRouter = typeof appRouter;

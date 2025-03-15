@@ -1,5 +1,5 @@
 import { routes } from "@client/clientConstants";
-import { isTRPCClientError } from "@client/utils/trpc";
+import { isTRPCClientError } from "@client/utils/trpcClient";
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { navigate } from "wouter/use-browser-location";
 

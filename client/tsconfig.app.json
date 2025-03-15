@@ -25,8 +25,10 @@
     "baseUrl": ".",
     "paths": {
       "@client/*": ["./src/*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../shared/*"],
+      "@server/*": ["../server/src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["../server", "../server/**/*", "node_modules"]
 }

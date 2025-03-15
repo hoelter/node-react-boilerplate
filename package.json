@@ -14,10 +14,10 @@
     "typecheck": "concurrently \"pnpm --filter client typecheck\" \"pnpm --filter server typecheck\"",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0 --fix .",
     "format": "prettier --write .",
-    "check": "pnpm run typecheck && pnpm run format && pnpm run lint"
+    "check": "pnpm run format && pnpm run lint && pnpm run typecheck"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "valibot": "1.0.0-rc.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",

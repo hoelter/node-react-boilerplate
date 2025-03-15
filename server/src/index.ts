@@ -1,80 +1,103 @@
+import cookieFastify from "@fastify/cookie";
+import helmetFastify from "@fastify/helmet";
+import { sql } from "@server/dbClient";
+import { fastifyRequestContext, requestContext } from "@fastify/request-context";
+import staticFastify from "@fastify/static";
+import { fastifyTRPCPlugin, FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
+import closeWithGrace from "close-with-grace";
 import { initQueues, initWorkers, shutdownPgBoss } from "@server/services/queueService";
 import { createTRPCContext } from "@server/services/trpcService";
-import { appRouter } from "@server/trpcRouter";
+import { AppRouter, appRouter } from "@server/trpcRouter";
 import { envVars, isProduction } from "@server/utils/envUtils";
-import { logger } from "@server/utils/logger";
 import { assertIsDefined } from "@shared/sharedUtils";
-import * as trpcExpress from "@trpc/server/adapters/express";
-import cookieParser from "cookie-parser";
-import express from "express";
-import helmet from "helmet";
+import Fastify from "fastify";
 import path from "node:path";
+import { logger, pinoLogger, initFastifyLogger } from "@server/utils/logger";
 
-const hostname = "0.0.0.0";
-const port = envVars.PORT;
+const fastify = Fastify({
+  loggerInstance: pinoLogger,
+});
 
-const app = express();
+initFastifyLogger(fastify.log);
 
-app.use(helmet());
+fastify.register(fastifyRequestContext);
+fastify.addHook("onRequest", (request, _, done) => {
+  requestContext.set("logger", request.log);
+  done();
+});
 
-app.use(cookieParser(envVars.COOKIE_SECRET));
+fastify.register(helmetFastify, {
+  contentSecurityPolicy: {
+    directives: {
+      "img-src": ["'self'", "data:", "https:"],
+    },
+  },
+});
 
-// This serves the client build in production mode.
-app.use(express.static(path.join(__dirname, "../../client/dist")));
+fastify.register(cookieFastify, {
+  secret: envVars.COOKIE_SECRET,
+});
 
-app.use(
-  "/trpc",
-  trpcExpress.createExpressMiddleware({
+fastify.register(fastifyTRPCPlugin, {
+  prefix: "/trpc",
+  trpcOptions: {
     router: appRouter,
     createContext: createTRPCContext,
     onError: (opts) => {
       logger.error("TRPC error", opts.error);
     },
-  }),
-);
+  } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
+});
 
-// Use for heatlh check
-app.get("/health-alive", (_, res) => {
+fastify.get("/health-alive", (_, res) => {
+  logger.debug("HEALTH ALIVE");
   res.send("alive");
 });
 
-// example additional express endpoint outside of trpc
-app.get("/api/hi-express", (_, res) => res.send("hello world api"));
+fastify.register(staticFastify, {
+  root: path.join(__dirname, "../../client/dist"),
+});
 
-app.get("*", (_, res) => {
-  // Redirect anything else to the react app.
-  logger.debug("catch all route hit");
-  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
+fastify.setNotFoundHandler((_, reply) => {
+  reply.sendFile("index.html");
 });
 
 async function start() {
+  const host = "0.0.0.0";
+  const port = envVars.PORT;
   assertIsDefined(port, "Port not defined during startup");
 
   try {
     await initQueues();
 
     if (!isProduction) {
-      // Run workers in the same process as the express server during development.
-      // In production, it is expected to run the worker.ts file as a separate node process.
       await initWorkers();
     }
 
-    const server = app.listen(port, hostname, () => {
-      logger.info(`Express server started on port: ${port} at hostname: ${hostname}`);
+    const handleExit = async () => {
+      await fastify.close();
+      await shutdownPgBoss();
+
+      logger.info("Db closing");
+      await sql.end();
+      logger.info("Db closed");
+    };
+
+    closeWithGrace(async ({ signal, err }) => {
+      if (err) {
+        logger.error("server closing due to an error", err);
+      }
+      logger.info(`${signal || "unknown"} signal received: gracefullyclosing HTTP server`);
+      await handleExit();
     });
 
-    async function handleExit(signalName: string) {
-      logger.info(`${signalName} signal received: closing HTTP server`);
-      server.close(async () => {
-        logger.info("HTTP server closed");
-        await shutdownPgBoss();
-        logger.info("Queue shutdown");
-        process.exit(0);
-      });
-    }
-
-    process.on("SIGTERM", () => handleExit("SIGTERM"));
-    process.on("SIGINT", () => handleExit("SIGINT"));
+    fastify.listen({ port, host }, (err, address) => {
+      if (err) {
+        logger.error("Failed to start HTTP server");
+        throw err;
+      }
+      logger.info(`Http server started on port: ${port} at host: ${host}, address: ${address}`);
+    });
   } catch (e) {
     logger.error("Failed to start app", e);
     process.exit(1);

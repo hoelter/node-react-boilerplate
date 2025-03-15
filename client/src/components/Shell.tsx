@@ -4,6 +4,7 @@ import { queryClient } from "@client/utils/queryClient";
 import { trpc } from "@client/utils/trpc";
 import { Anchor, AppShell, Burger, Divider, Group, useMantineTheme } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 
@@ -13,12 +14,14 @@ export function Shell() {
   const [burgerOpened, { toggle: toggleBurger, close }] = useDisclosure();
   const isDesktopWidth = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
 
-  const logout = trpc.logout.useMutation({
-    onSuccess() {
-      setLocation(routes.signIn);
-      queryClient.clear();
-    },
-  });
+  const logout = useMutation(
+    trpc.logout.mutationOptions({
+      onSuccess() {
+        setLocation(routes.signIn);
+        queryClient.clear();
+      },
+    }),
+  );
 
   const isSignInPage = location === routes.signIn;
 

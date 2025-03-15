@@ -29,4 +29,3 @@ export async function initWorkers() {
 
   logger.info("pgboss workers initialized -- jobs will process");
 }
-

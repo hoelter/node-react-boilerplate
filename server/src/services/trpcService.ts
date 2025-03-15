@@ -1,7 +1,7 @@
 import { parseAuthCookie } from "@server/services/authService";
-import * as trpcExpress from "@trpc/server/adapters/express";
+import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-export function createTRPCContext({ req, res }: trpcExpress.CreateExpressContextOptions) {
+export function createTRPCContext({ req, res }: CreateFastifyContextOptions) {
   const authContext = parseAuthCookie(req);
   return {
     req,
